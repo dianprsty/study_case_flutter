@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:study_case/core/extension/context_extension.dart';
+import 'package:study_case/core/model/general_state.dart';
 import 'package:study_case/core/service/go_router_service.dart';
 import 'package:study_case/core/widget/custom_text_field.dart';
+import 'package:study_case/feature/auth/presentation/bloc/auth_bloc.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -13,11 +17,15 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  bool isPasswordHidden = true;
+
   @override
   void dispose() {
+    nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -42,26 +50,89 @@ class _RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 CustomTextField(
+                  controller: nameController,
+                  labelText: 'Name',
+                  prefixIcon: Icons.email_outlined,
+                ),
+                CustomTextField(
+                  controller: emailController,
                   labelText: 'Email',
                   prefixIcon: Icons.email_outlined,
                 ),
                 CustomTextField(
+                  controller: passwordController,
                   labelText: 'Password',
                   prefixIcon: Icons.lock_outline,
+                  obscureText: isPasswordHidden,
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isPasswordHidden = !isPasswordHidden;
+                      });
+                    },
+                    child: Icon(
+                      isPasswordHidden
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
+                  ),
                 ),
                 SizedBox(height: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    backgroundColor: Colors.blue,
-                  ),
-                  onPressed: () {},
-                  child: const Text(
-                    'Register',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                BlocConsumer<AuthBloc, AuthState>(
+                  listener: (context, state) {
+                    if (state.status == GeneralState.error()) {
+                      context.showSnackBar(
+                        message: state.errorMessage!,
+                        color: Colors.red,
+                      );
+                    }
+
+                    if (state.status == GeneralState.success()) {
+                      context.showSnackBar(
+                        message: 'Register Success',
+                        color: Colors.green,
+                      );
+                      context.goNamed(AppRoute.login.name);
+                    }
+                  },
+                  builder: (BuildContext context, AuthState state) {
+                    return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        backgroundColor: Colors.blue,
+                      ),
+                      onPressed: () {
+                        final name = nameController.text.trim();
+                        final email = emailController.text.trim();
+                        final password = passwordController.text;
+
+                        if (name.isEmpty || email.isEmpty || password.isEmpty) {
+                          context.showSnackBar(
+                            message: 'Please fill all fields',
+                            color: Colors.red,
+                          );
+                          return;
+                        }
+
+                        context.read<AuthBloc>().add(
+                          AuthEventRegister(
+                            name: name,
+                            email: email,
+                            password: password,
+                          ),
+                        );
+                      },
+                      child:
+                          state.status == GeneralState.loading()
+                              ? const CircularProgressIndicator()
+                              : const Text(
+                                'Register',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                    );
+                  },
                 ),
                 GestureDetector(
                   onTap: () {

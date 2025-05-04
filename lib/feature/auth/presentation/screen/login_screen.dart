@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:study_case/core/extension/context_extension.dart';
+import 'package:study_case/core/model/general_state.dart';
 import 'package:study_case/core/service/go_router_service.dart';
 import 'package:study_case/core/widget/custom_text_field.dart';
+import 'package:study_case/feature/auth/presentation/bloc/auth_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,6 +19,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  bool isPasswordHidden = true;
 
   @override
   void dispose() {
@@ -42,28 +48,79 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 CustomTextField(
+                  controller: emailController,
                   labelText: 'Email',
                   prefixIcon: Icons.email_outlined,
                 ),
                 CustomTextField(
+                  controller: passwordController,
                   labelText: 'Password',
+                  obscureText: isPasswordHidden,
                   prefixIcon: Icons.lock_outline,
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isPasswordHidden = !isPasswordHidden;
+                      });
+                    },
+                    child: Icon(
+                      isPasswordHidden
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
+                  ),
                 ),
                 SizedBox(height: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    backgroundColor: Colors.blue,
-                  ),
-                  onPressed: () {
-                    context.goNamed(AppRoute.home.name);
+                BlocConsumer<AuthBloc, AuthState>(
+                  listener: (context, state) {
+                    if (state.status == GeneralState.error()) {
+                      context.showSnackBar(
+                        message: state.errorMessage!,
+                        color: Colors.red,
+                      );
+                    }
+
+                    if (state.status == GeneralState.success()) {
+                      context.showSnackBar(
+                        message: 'Login Success',
+                        color: Colors.green,
+                      );
+                      context.goNamed(AppRoute.home.name);
+                    }
                   },
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  builder: (context, state) {
+                    return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        backgroundColor: Colors.blue,
+                      ),
+                      onPressed: () {
+                        final email = emailController.text;
+                        final password = passwordController.text;
+
+                        if (email.isEmpty || password.isEmpty) {
+                          context.showSnackBar(
+                            message: "Please fill all fields",
+                            color: Colors.red,
+                          );
+                          return;
+                        }
+
+                        context.read<AuthBloc>().add(
+                          AuthEventLogin(email: email, password: password),
+                        );
+                      },
+                      child:
+                          state.status == GeneralState.loading()
+                              ? const CircularProgressIndicator()
+                              : const Text(
+                                'Login',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                    );
+                  },
                 ),
               ],
             ),

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:study_case/feature/auth/presentation/screen/login_screen.dart';
@@ -35,5 +36,24 @@ class GoRouterService {
         builder: (context, state) => const RegisterScreen(),
       ),
     ],
+    redirect: (context, state) {
+      final user = FirebaseAuth.instance.currentUser;
+
+      final route = state.matchedLocation;
+      bool isLoggedIn = user != null;
+
+      if (!isLoggedIn &&
+          route != AppRoute.login.path &&
+          route != AppRoute.register.path) {
+        return AppRoute.login.path;
+      }
+
+      if (isLoggedIn &&
+          (route == AppRoute.login.path || route == AppRoute.register.path)) {
+        return AppRoute.home.path;
+      }
+
+      return state.path;
+    },
   );
 }
