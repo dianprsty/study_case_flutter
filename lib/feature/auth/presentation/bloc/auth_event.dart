@@ -14,4 +14,10 @@ abstract class AuthEvent with _$AuthEvent {
     required String email,
     required String password,
   }) = AuthEventRegister;
+
+  const factory AuthEvent.signInWithGoogle() = AuthEventSignInWithGoogle;
+  const factory AuthEvent.getUser() = AuthEventGetUser;
+
+  const factory AuthEvent.resetPassword({required String email}) =
+      AuthEventResetPassword;
 }

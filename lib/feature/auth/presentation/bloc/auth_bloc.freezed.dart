@@ -237,6 +237,154 @@ as String,
 }
 
 /// @nodoc
+
+
+class AuthEventSignInWithGoogle with DiagnosticableTreeMixin implements AuthEvent {
+  const AuthEventSignInWithGoogle();
+  
+
+
+
+
+
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AuthEvent.signInWithGoogle'))
+    ;
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthEventSignInWithGoogle);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+  return 'AuthEvent.signInWithGoogle()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class AuthEventGetUser with DiagnosticableTreeMixin implements AuthEvent {
+  const AuthEventGetUser();
+  
+
+
+
+
+
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AuthEvent.getUser'))
+    ;
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthEventGetUser);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+  return 'AuthEvent.getUser()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class AuthEventResetPassword with DiagnosticableTreeMixin implements AuthEvent {
+  const AuthEventResetPassword({required this.email});
+  
+
+ final  String email;
+
+/// Create a copy of AuthEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AuthEventResetPasswordCopyWith<AuthEventResetPassword> get copyWith => _$AuthEventResetPasswordCopyWithImpl<AuthEventResetPassword>(this, _$identity);
+
+
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AuthEvent.resetPassword'))
+    ..add(DiagnosticsProperty('email', email));
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthEventResetPassword&&(identical(other.email, email) || other.email == email));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,email);
+
+@override
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+  return 'AuthEvent.resetPassword(email: $email)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $AuthEventResetPasswordCopyWith<$Res> implements $AuthEventCopyWith<$Res> {
+  factory $AuthEventResetPasswordCopyWith(AuthEventResetPassword value, $Res Function(AuthEventResetPassword) _then) = _$AuthEventResetPasswordCopyWithImpl;
+@useResult
+$Res call({
+ String email
+});
+
+
+
+
+}
+/// @nodoc
+class _$AuthEventResetPasswordCopyWithImpl<$Res>
+    implements $AuthEventResetPasswordCopyWith<$Res> {
+  _$AuthEventResetPasswordCopyWithImpl(this._self, this._then);
+
+  final AuthEventResetPassword _self;
+  final $Res Function(AuthEventResetPassword) _then;
+
+/// Create a copy of AuthEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? email = null,}) {
+  return _then(AuthEventResetPassword(
+email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$AuthState implements DiagnosticableTreeMixin {
 
  GeneralState? get status; UserModel? get user; String? get errorMessage;

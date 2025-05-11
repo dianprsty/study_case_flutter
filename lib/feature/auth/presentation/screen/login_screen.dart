@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:study_case/core/di/injection.dart';
 import 'package:study_case/core/extension/context_extension.dart';
 import 'package:study_case/core/model/general_state.dart';
 import 'package:study_case/core/service/go_router_service.dart';
@@ -70,6 +71,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      context.pushNamed(AppRoute.forgotPassword.name);
+                    },
+                    child: Text("Forgot Password?"),
+                  ),
+                ),
                 SizedBox(height: 16),
                 BlocConsumer<AuthBloc, AuthState>(
                   listener: (context, state) {
@@ -114,7 +124,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child:
                           state.status == GeneralState.loading()
-                              ? const CircularProgressIndicator()
+                              ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: const CircularProgressIndicator(),
+                              )
                               : const Text(
                                 'Login',
                                 style: TextStyle(color: Colors.white),
@@ -130,6 +143,25 @@ class _LoginScreenState extends State<LoginScreen> {
               context.goNamed(AppRoute.register.name);
             },
             child: Text("Go To Register Screen", textAlign: TextAlign.center),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                return OutlinedButton(
+                  onPressed: () {
+                    getIt<AuthBloc>().add(AuthEventSignInWithGoogle());
+                  },
+                  child:
+                      state.status == GeneralState.loading()
+                          ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: const CircularProgressIndicator(),
+                          )
+                          : Text("Sign In With Google"),
+                );
+              },
+            ),
           ),
         ],
       ),

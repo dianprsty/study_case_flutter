@@ -12,4 +12,9 @@ abstract class IAuthRepository {
     required String password,
   });
   Future<Result<void>> logout();
+
+  Future<Result<UserModel>> signInWithGoogle();
+  Future<Result<UserModel?>> getUser();
+
+  Future<Result<void>> resetPassword({required String email});
 }

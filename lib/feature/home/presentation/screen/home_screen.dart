@@ -37,11 +37,17 @@ class HomeScreen extends StatelessWidget {
                 }
               },
               builder: (context, state) {
-                return ElevatedButton(
-                  onPressed: () {
-                    context.read<AuthBloc>().add(AuthEventLogout());
-                  },
-                  child: Text('Logout'),
+                return Column(
+                  spacing: 16,
+                  children: [
+                    Text(state.user?.name ?? "-"),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<AuthBloc>().add(AuthEventLogout());
+                      },
+                      child: Text('Logout'),
+                    ),
+                  ],
                 );
               },
             ),
