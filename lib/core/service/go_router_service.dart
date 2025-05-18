@@ -1,16 +1,25 @@
+import 'package:flutter/material.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:study_case/feature/auth/presentation/screen/forgot_password.dart';
 import 'package:study_case/feature/auth/presentation/screen/login_screen.dart';
 import 'package:study_case/feature/auth/presentation/screen/register_screen.dart';
+import 'package:study_case/feature/explore/presentation/screen/explore_screen.dart';
 import 'package:study_case/feature/home/presentation/screen/home_screen.dart';
+import 'package:study_case/feature/main/presentation/screen/main_screen.dart';
+import 'package:study_case/feature/profile/presentation/screen/profile_screen.dart';
+import 'package:study_case/feature/saved/presentation/screen/saved_screen.dart';
 
 enum AppRoute {
   home(name: 'home', path: '/'),
   login(name: 'login', path: '/login'),
   register(name: 'register', path: '/register'),
-  forgotPassword(name: 'forgot-password', path: '/forgot-password');
+  forgotPassword(name: 'forgot-password', path: '/forgot-password'),
+  explore(name: 'explore', path: '/explore'),
+  saved(name: 'saved', path: '/saved'),
+  profile(name: 'profile', path: '/profile');
 
   final String name;
   final String path;
@@ -19,14 +28,12 @@ enum AppRoute {
 }
 
 class GoRouterService {
+  static final rootKey = GlobalKey<NavigatorState>();
+  static final shellRouteKey = GlobalKey<NavigatorState>();
   GoRouter router = GoRouter(
+    navigatorKey: rootKey,
     initialLocation: AppRoute.login.path,
     routes: [
-      GoRoute(
-        path: AppRoute.home.path,
-        name: AppRoute.home.name,
-        builder: (context, state) => const HomeScreen(),
-      ),
       GoRoute(
         path: AppRoute.login.path,
         name: AppRoute.login.name,
@@ -41,6 +48,50 @@ class GoRouterService {
         path: AppRoute.forgotPassword.path,
         name: AppRoute.forgotPassword.name,
         builder: (context, state) => const ForgotPassword(),
+      ),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return MainScreen(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(
+            navigatorKey: shellRouteKey,
+            routes: [
+              GoRoute(
+                path: AppRoute.home.path,
+                name: AppRoute.home.name,
+                builder: (context, state) => const HomeScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoute.explore.path,
+                name: AppRoute.explore.name,
+                builder: (context, state) => const ExploreScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoute.saved.path,
+                name: AppRoute.saved.name,
+                builder: (context, state) => const SavedScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoute.profile.path,
+                name: AppRoute.profile.name,
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
     redirect: (context, state) {

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:study_case/core/di/injection.dart';
 import 'package:study_case/core/service/go_router_service.dart';
 import 'package:study_case/feature/auth/presentation/bloc/auth_bloc.dart';
+import 'package:study_case/feature/home/presentation/bloc/book_bloc.dart';
 
 import 'firebase_options.dart';
 
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => getIt<AuthBloc>()..add(AuthEvent.getUser()),
         ),
+        BlocProvider(create: (context) => getIt<BookBloc>()),
       ],
       child: MaterialApp.router(
         title: 'Flutter Demo',
