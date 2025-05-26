@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'package:study_case/core/model/pagination.dart';
 import 'package:study_case/feature/home/domain/entities/book_model.dart';
 
 part 'book_list_response.freezed.dart';
@@ -69,21 +70,6 @@ abstract class Details with _$Details {
 
   factory Details.fromJson(Map<String, dynamic> json) =>
       _$DetailsFromJson(json);
-}
-
-@freezed
-abstract class Pagination with _$Pagination {
-  const factory Pagination({
-    @JsonKey(name: "currentPage") int? currentPage,
-    @JsonKey(name: "totalPages") int? totalPages,
-    @JsonKey(name: "totalItems") int? totalItems,
-    @JsonKey(name: "itemsPerPage") int? itemsPerPage,
-    @JsonKey(name: "hasNextPage") bool? hasNextPage,
-    @JsonKey(name: "hasPrevPage") bool? hasPrevPage,
-  }) = _Pagination;
-
-  factory Pagination.fromJson(Map<String, dynamic> json) =>
-      _$PaginationFromJson(json);
 }
 
 extension BookExtension on Book {

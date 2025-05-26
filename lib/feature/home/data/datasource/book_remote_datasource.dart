@@ -1,9 +1,10 @@
+import 'package:study_case/core/model/general_params.dart';
 import 'package:study_case/core/model/result.dart';
 import 'package:study_case/core/service/api_service.dart';
 import 'package:study_case/feature/home/data/model/book_list_response.dart';
 
 abstract class IBookRemoteDatasource {
-  Future<Result<BookListResponse>> getBookByCategory(String category);
+  Future<Result<BookListResponse>> getBookByCategory(GeneralParams params);
 }
 
 class BookRemoteDatasourceImpl extends IBookRemoteDatasource {
@@ -12,10 +13,11 @@ class BookRemoteDatasourceImpl extends IBookRemoteDatasource {
   BookRemoteDatasourceImpl({required ApiService apiService})
     : _apiService = apiService;
   @override
-  Future<Result<BookListResponse>> getBookByCategory(String category) async {
+  Future<Result<BookListResponse>> getBookByCategory(
+    GeneralParams params,
+  ) async {
     try {
-      Map<String, String> queryParams = {};
-      if (category.isNotEmpty) queryParams['genre'] = category;
+      Map<String, dynamic> queryParams = params.toJson();
       final result = await _apiService.get(
         path: '/book',
         queryParams: queryParams,
