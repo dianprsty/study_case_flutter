@@ -4,7 +4,9 @@ import 'package:study_case/core/model/pagination.dart';
 import 'package:study_case/core/model/result.dart';
 import 'package:study_case/feature/home/data/datasource/book_remote_datasource.dart';
 import 'package:study_case/feature/home/data/model/book_list_response.dart';
+import 'package:study_case/feature/home/data/model/genre_list_response.dart';
 import 'package:study_case/feature/home/domain/entities/book_model.dart';
+import 'package:study_case/feature/home/domain/entities/genre_model.dart';
 import 'package:study_case/feature/home/domain/repository/book_repository.dart';
 
 class BookRepositoryImpl extends IBookRepository {
@@ -32,6 +34,23 @@ class BookRepositoryImpl extends IBookRepository {
       return Result.failed(
         result.errorMessage ?? 'get book by category failed',
       );
+    }
+  }
+
+  @override
+  Future<Result<List<GenreModel>>> getGenre() async {
+    final result = await _bookRemoteDatasource.getGenre();
+
+    if (result.isSuccess) {
+      final genres =
+          result.value?.genreStatistics
+              ?.map((genre) => genre.toGenreModel())
+              .toList() ??
+          [];
+
+      return Result.success(genres);
+    } else {
+      return Result.failed(result.errorMessage ?? 'get genre failed');
     }
   }
 }

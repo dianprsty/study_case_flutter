@@ -7,6 +7,7 @@ import 'package:study_case/core/di/injection.dart';
 import 'package:study_case/core/service/go_router_service.dart';
 import 'package:study_case/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:study_case/feature/home/presentation/bloc/book_bloc.dart';
+import 'package:study_case/feature/home/presentation/bloc/genre_bloc.dart';
 
 import 'firebase_options.dart';
 
@@ -30,11 +31,12 @@ class MyApp extends StatelessWidget {
           create: (context) => getIt<AuthBloc>()..add(AuthEvent.getUser()),
         ),
         BlocProvider(create: (context) => getIt<BookBloc>()),
+        BlocProvider(create: (context) => getIt<GenreBloc>()),
       ],
       child: MaterialApp.router(
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         ),
         routerConfig: getIt<GoRouterService>().router,
       ),

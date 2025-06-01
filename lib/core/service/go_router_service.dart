@@ -7,6 +7,8 @@ import 'package:study_case/feature/auth/presentation/screen/forgot_password.dart
 import 'package:study_case/feature/auth/presentation/screen/login_screen.dart';
 import 'package:study_case/feature/auth/presentation/screen/register_screen.dart';
 import 'package:study_case/feature/explore/presentation/screen/explore_screen.dart';
+import 'package:study_case/feature/home/domain/entities/book_model.dart';
+import 'package:study_case/feature/home/presentation/screen/detail_book_screen.dart';
 import 'package:study_case/feature/home/presentation/screen/home_screen.dart';
 import 'package:study_case/feature/main/presentation/screen/main_screen.dart';
 import 'package:study_case/feature/profile/presentation/screen/profile_screen.dart';
@@ -19,7 +21,8 @@ enum AppRoute {
   forgotPassword(name: 'forgot-password', path: '/forgot-password'),
   explore(name: 'explore', path: '/explore'),
   saved(name: 'saved', path: '/saved'),
-  profile(name: 'profile', path: '/profile');
+  profile(name: 'profile', path: '/profile'),
+  detailBook(name: 'detail-book', path: '/detail-book');
 
   final String name;
   final String path;
@@ -48,6 +51,14 @@ class GoRouterService {
         path: AppRoute.forgotPassword.path,
         name: AppRoute.forgotPassword.name,
         builder: (context, state) => const ForgotPassword(),
+      ),
+      GoRoute(
+        path: AppRoute.detailBook.path,
+        name: AppRoute.detailBook.name,
+        builder: (context, state) {
+          final book = state.extra as BookModel;
+          return DetailBookScreen(book: book);
+        },
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

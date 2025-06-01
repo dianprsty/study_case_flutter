@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:study_case/core/di/injection.dart';
 import 'package:study_case/core/model/general_params.dart';
 import 'package:study_case/core/model/general_state.dart';
 import 'package:study_case/feature/home/domain/entities/book_model.dart';
+import 'package:study_case/feature/home/domain/entities/genre_model.dart';
 import 'package:study_case/feature/home/presentation/bloc/book_bloc.dart';
+import 'package:study_case/feature/home/presentation/bloc/genre_bloc.dart';
 import 'package:study_case/feature/home/presentation/widget/book_list.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,8 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     context.read<BookBloc>().add(
-      BookEvent.getBookByCategory(GeneralParams(genre: "Romance")),
+      BookEvent.getBookByCategory(GeneralParams(genre: "")),
     );
+    getIt<GenreBloc>().add(GenreEvent.getGenre());
   }
 
   @override
@@ -49,21 +53,69 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Container(
-                height: 40,
-                padding: EdgeInsets.symmetric(vertical: 16),
+                height: 60,
+                padding: EdgeInsets.symmetric(vertical: 8),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return Chip(label: Text("Category"));
-                        },
-                        separatorBuilder:
-                            (context, index) => SizedBox(width: 8),
-                        itemCount: 10,
-                      ),
+                    BlocBuilder<GenreBloc, GenreState>(
+                      builder: (context, state) {
+                        if (state.status == GeneralState.loading()) {
+                          return const CircularProgressIndicator();
+                        }
+
+                        if (state.status == GeneralState.error()) {
+                          return Text("Failed Get Category");
+                        }
+                        return Expanded(
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              final genre =
+                                  index == 0
+                                      ? GenreModel()
+                                      : state.genres[index - 1];
+
+                              bool isSelected =
+                                  genre.genre == state.selectedGenre;
+                              return GestureDetector(
+                                onTap: () {
+                                  context.read<GenreBloc>().add(
+                                    GenreEvent.setGenre(genre.genre),
+                                  );
+                                  context.read<BookBloc>().add(
+                                    BookEvent.getBookByCategory(
+                                      GeneralParams(genre: genre.genre),
+                                    ),
+                                  );
+                                },
+                                child: Chip(
+                                  backgroundColor:
+                                      isSelected
+                                          ? Theme.of(context).primaryColor
+                                          : null,
+                                  label: Text(
+                                    index == 0
+                                        ? "Semua"
+                                        : '${genre.genre} (${genre.count})',
+                                    style: TextStyle(
+                                      color:
+                                          isSelected
+                                              ? Theme.of(
+                                                context,
+                                              ).colorScheme.onPrimary
+                                              : null,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            separatorBuilder:
+                                (context, index) => SizedBox(width: 8),
+                            itemCount: state.genres.length + 1,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

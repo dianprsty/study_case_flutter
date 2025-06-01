@@ -17,7 +17,9 @@ import 'package:study_case/feature/home/data/datasource/book_remote_datasource.d
 import 'package:study_case/feature/home/data/repository/book_repository_impl.dart';
 import 'package:study_case/feature/home/domain/repository/book_repository.dart';
 import 'package:study_case/feature/home/domain/usecase/get_book_by_category_usecase.dart';
+import 'package:study_case/feature/home/domain/usecase/get_genre_usecase.dart';
 import 'package:study_case/feature/home/presentation/bloc/book_bloc.dart';
+import 'package:study_case/feature/home/presentation/bloc/genre_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -66,6 +68,10 @@ void setup() {
     () => GetBookByCategoryUsecase(bookRepository: getIt()),
   );
 
+  getIt.registerLazySingleton<GetGenreUsecase>(
+    () => GetGenreUsecase(bookRepository: getIt()),
+  );
+
   // Bloc
   getIt.registerLazySingleton<AuthBloc>(
     () => AuthBloc(
@@ -79,5 +85,9 @@ void setup() {
   );
   getIt.registerLazySingleton<BookBloc>(
     () => BookBloc(bookRepository: getIt()),
+  );
+
+  getIt.registerLazySingleton<GenreBloc>(
+    () => GenreBloc(getGenreUsecase: getIt()),
   );
 }

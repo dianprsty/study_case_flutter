@@ -3,10 +3,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:study_case/core/extension/context_extension.dart';
 import 'package:study_case/core/model/general_params.dart';
 import 'package:study_case/core/model/general_state.dart';
+import 'package:study_case/core/service/go_router_service.dart';
 import 'package:study_case/feature/home/domain/entities/book_model.dart';
 import 'package:study_case/feature/home/presentation/bloc/book_bloc.dart';
 
@@ -97,48 +99,57 @@ class _BookListState extends State<BookList> {
                       ),
                       itemBuilder: (context, index) {
                         BookModel book = state.books[index];
-                        return Card(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Expanded(
-                                child: Image.network(
-                                  book.coverImage,
-                                  loadingBuilder: (
-                                    context,
-                                    child,
-                                    loadingProgress,
-                                  ) {
-                                    if (loadingProgress == null) return child;
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  },
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Image.asset(
-                                      "assets/images/empty-book.png",
-                                    );
-                                  },
+                        return GestureDetector(
+                          onTap: () {
+                            context.pushNamed(
+                              AppRoute.detailBook.name,
+                              extra: book,
+                            );
+                          },
+                          child: Card(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                  child: Image.network(
+                                    book.coverImage,
+                                    loadingBuilder: (
+                                      context,
+                                      child,
+                                      loadingProgress,
+                                    ) {
+                                      if (loadingProgress == null) return child;
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        "assets/images/empty-book.png",
+                                      );
+                                    },
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      book.title,
-                                      style: TextStyle(
-                                        overflow: TextOverflow.ellipsis,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        book.title,
+                                        style: TextStyle(
+                                          overflow: TextOverflow.ellipsis,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                    Text(book.author),
-                                  ],
+                                      Text(book.author),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       },
